@@ -18,18 +18,37 @@
         </div>
       </div>
     </div>
-    <div class="ball-container">
-      <div v-for="ball in balls">
-      <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
+    <div class="ball-container" v-for="ball in balls">
+      <transition name="drop" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter" >
          <div v-show="ball.show" class="ball" >
           <div class="inner inner-hook"></div>
         </div>
       </transition>
     </div>
-    </div>
+    <!--<div class="shopcart-list" v-show="listShow">
+      <div class="list-header">
+        <h1 class="title">购物车</h1>
+        <span class="empty">清空</span>
+      </div>
+      <div class="list-content">
+        <ul>
+          <li class="food" v-for="food in selectFoods">
+            <span class="name">{{food.name}}</span>
+            <div class="price">
+              <span>￥{{food.price*food.count}}</span>
+            </div>
+            <div class="cartcontrol-wrapper">
+              <cartcontrol :food="food"></cartcontrol>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>-->
   </div>
 </template>
 <script>
+  import cartcontrol from '../cartcontroll/cartcontroll';
+
   export default{
     props: {
       selectFoods: {
@@ -104,7 +123,6 @@
     },
     methods: {
       drop(el){
-        console.log(111)
         for (let i = 0; i < this.balls.length; i++) {
           let ball = this.balls[i];
           if (!ball.show) {
@@ -115,7 +133,7 @@
           }
         }
       },
-      beforeDrop(el){
+      beforeEnter(el){
         let count = this.balls.length;
         while (count--) {
           let ball = this.balls[count];
@@ -132,26 +150,29 @@
           }
         }
       },
-      dropping(el,done){
+      enter(el,done){
         let rf = el.offsetHeight;
         this.$nextTick(() => {
-          el.style.display = '';
+
           el.style.webkitTransform = 'translate3d(0,0,0)';
           el.style.transform = 'translate3d(0,0,0)';
           let inner = el.getElementsByClassName("inner-hook")[0];
           inner.style.webkitTransform = 'translate3d(0,0,0)';
           inner.style.transform = 'translate3d(0,0,0)';
-          el.addEventLister('transitionend',done)
+          el.addEventListener('transitionend', done);
         })
       },
-      afterDrop(el){
+      afterEnter(el){
         let ball = this.dropBalls.shift();
         if (ball) {
           ball.show = false;
-          ball.style.display = 'block';
+          el.style.display = 'none';
         }
       }
     },
+    components:{
+      cartcontrol:cartcontrol
+  }
 
   }
 </script>
@@ -266,8 +287,8 @@
         left: 32px;
         bottom: 22px;
         z-index: 200;
-        &.drop-transition {
-          transition: all 0.3s cubic-bezier(0.49, -0.29, 0.75, 0.41);
+        transition: all 0.5s cubic-bezier(0.49,-0.29,0.75,0.41);
+
           .inner {
             width: 16px;
             height: 16px;
@@ -276,7 +297,7 @@
             transition: all 0.4s linear;
 
           }
-        }
+
       }
 
     }

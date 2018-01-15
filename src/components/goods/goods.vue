@@ -44,7 +44,7 @@
   <!--<food :food="selectFood"></food>-->
 </template>
 <script>
-  <!--https://segmentfault.com/q/1010000007855788-->
+
   import BScroll from "better-scroll";
   import shopcart from "../shopCart/shopCart";
   import cartcontroll from '../cartcontroll/cartcontroll';
@@ -126,7 +126,9 @@
         }
       },
       _drop(target){
-      	this.$refs.shopCart.drop(target);
+      	this.$nextTick(()=>{
+          this.$refs.shopCart.drop(target);
+        })
       }
     },
     components:{
