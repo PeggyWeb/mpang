@@ -89,8 +89,9 @@
     created(){
     	this.classMap=['decrease','discount','special','invoice','guarantee'];
   		this.$http("../../data.json").then((result)=>{
-  			let res = result.data;
-  			this.goods = res.goods;
+  			/*let res = result.data;
+  			this.goods = res.goods;*/
+  			this.goods = result.data.goods;
         this.$nextTick(() => {
           this._initScroll();
           this._calculateHeight();
@@ -111,7 +112,6 @@
       	if(!event._constructed){
       		return;
         }
-        console.log("111")
         this.selectedFood = food;
       	this.$refs.food.show();
       },

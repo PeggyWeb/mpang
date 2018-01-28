@@ -1,6 +1,6 @@
 <template>
-	<transition name="move">
-    <div v-show="showFlag" class="food">
+  <transition name="move">
+    <div v-show="showFlag" class="food" ref="food">
       <div class="food-content">
         <div class="image-header">
           <img :src="food.image">
@@ -17,110 +17,330 @@
           <div class="price">
             <span class="now">{{food.price}}</span><span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
           </div>
+          <div class="cartcontrol-wrapper">
+
+            <cartcontrol :food="food"></cartcontrol>
+          </div>
+          <transition name="fade">
+            <div class="buy" @click="addFirst($event)" v-show="!food.count || food.count === 0">加入购物车</div>
+          </transition>
+        </div>
+        <split></split>
+        <div class="info" v-show="food.info">
+          <h1 class="title">商品信息</h1>
+          <p class="text">{{food.info}}</p>
+        </div>
+        <split></split>
+        <div class="rating">
+          <h1 class="title">商品评价</h1>
+          <ratingSelect :selectType="selectType" :onlyContent="onlyContent" :desc="desc" :ratings="food.ratings"
+                        v-on:select="selectRating" v-on:toggle="toggleContent"></ratingSelect>
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length">
+              <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item">
+                <div class="user">
+                  <span class="name">{{rating.name}}</span>
+                  <img class="avatar" width="12" height="12" :src="rating.avater">
+                </div>
+                <div class="time">{{rating.rateTime | formatDate}}</div>
+                <p class="text">
+                  <span :class="rating.rateType===0? colorBlue :'', iconfont">{{rating.text}}</span>
+                </p>
+              </li>
+            </ul>
+            <div class="no-rating" v-show="!food.ratings || food.ratings.length">暂无评价</div>
+          </div>
         </div>
       </div>
+
     </div>
-	</transition>
+  </transition>
 </template>
 <script>
-	export default{
-		props:{
-			food:{
-				type:Object,
+  import Vue from 'vue'
+  import BScroll from 'better-scroll';
+  import cartcontrol from "../cartcontroll/cartcontroll";
+  import split from '../split/split'
+  import ratingSelect from '../ratingSelect/ratingSelect'
+  import {formatDate} from '../../common/js/date.js';
+  //花括号指明引入的是哪个方法
+  //
+
+  const POSITIVE = 0;
+  const NEGATIVE = 1;
+  const ALL = 2;
+
+  export default{
+
+    props: {
+      food: {
+        type: Object,
 
       }
     },
     data(){
-			return{
-        showFlag:false
+      return {
+        colorBlue: 'colorblue',
+        iconfont: 'iconfont',
+        showFlag: false,
+        selectType: ALL,
+        onlyContent: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       }
     },
-    methods:{
-    	show(){
-    		this.showFlag = true
+    methods: {
+      show(){
+        this.showFlag = true;
+        this.selectType = 0;
+        this.onlyContent = true;
+
+
+        this.$nextTick(() => {
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$refs.food, {
+              click: true
+            });
+          } else {
+            this.scroll.refresh();
+          }
+        });
+      },
+      toggleContent() {
+        this.onlyContent = !this.onlyContent;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      selectRating(type){
+        this.selectType = type;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
       },
       hide(){
-    		this.showFlag = false;
+        this.showFlag = false;
+      },
+      addFirst(event){
+        if (!event._constructed) {
+          return;
+        }
+        this.$on('cart.add', event.target);
+        console.log(event.target)
+        Vue.set(this.food, 'count', 1);
+        //到此，加入购物车可以显示但小球无动画，原因，点击的时候元素隐藏了，因此获取不到位置，故可以给这里的点击加上动画transition,让他不那么快消失
+      },
+      needShow(type, text){
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === ALL) {
+          return true;
+        } else {
+          return type === this.selectType;
+        }
       }
+    },
+    filters: {
+      formatDate(time){
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm')
+      }
+    },
+    components: {
+      cartcontrol: cartcontrol,
+      split: split,
+      ratingSelect: ratingSelect
     }
   }
 </script>
 <style lang="scss" type="text/css" rel="stylesheet/scss">
-  .move-enter-active,.move-leave-active {
-    transition:all 0.2s linear;
+  .move-enter-active, .move-leave-active {
+    transition: all 0.4s linear;
   }
-    .move-enter,.move-leave{
-    transform:translate3d(100%,0,0);
+
+  .move-enter, .move-leave-to {
+    transform: translate3d(100%, 0, 0);
   }
-  .food{
-    position:fixed;
-    left:0;
-    top:0;
-    bottom:48px;
-    z-index:30;
-    width:100%;
+
+  .food {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 48px;
+    z-index: 30;
+    width: 100%;
     background-color: #fff;
-    transition:all 0.2s linear;
-    transform:translate3d(0,0,0);
-    .image-header{
-      position:relative;
-      width:100%;
-      height:0;
-      padding-top:100%;
-      img{
-        position:absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
+
+    .image-header {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-top: 100%;
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
-      .back{
-        position:absolute;
-        top:10px;
-        left:0;
-        .iconfont{
-          display:block;
-          padding:10px;
-          font-size:20px;
-          color:#fff;
+      .back {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        .iconfont {
+          display: block;
+          padding: 10px;
+          border-radius: 50%;
+          font-size: 20px;
+          color: #fff;
+          background-color: rgba(30, 30, 30, .6)
         }
       }
     }
-    .content{
-      padding:18px;
-      .title{
-        margin-bottom:8px;
-        line-height:14px;
-        font-size:14px;
-        font-weight:700;
-        color:rgb(7,17,27);
-        .detail{
-          margin-bottom:18px;
-          line-height:10px;
-          height:10px;
-          .sell-count,.rating{
-            font-size: 10px;
-            color:rgb(7,17,27);
-            .sell-count{
-              margin-right:12px;
-            }
+    .content {
+      position: relative;
+      padding: 18px;
+      .title {
+        margin-bottom: 8px;
+        line-height: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgb(7, 17, 27);
+      }
+      .detail {
+        margin-bottom: 18px;
+        line-height: 10px;
+        height: 10px;
+        .sell-count, .rating {
+          font-size: 10px;
+          color: rgb(7, 17, 27);
+          .sell-count {
+            margin-right: 12px;
           }
-          .price {
-            font-weight: 700;
-            line-height: 24px;
-            .now {
-              margin-right: 8px;
-              font-size: 14px;
-              color: rgb(240, 20, 20)
-            }
-            .old {
-              text-decoration: line-through;
+        }
+
+      }
+      .price {
+        font-weight: 700;
+        line-height: 24px;
+        .now {
+          margin-right: 8px;
+          font-size: 14px;
+          color: rgb(240, 20, 20)
+        }
+        .old {
+          text-decoration: line-through;
+          font-size: 10px;
+          color: rgb(147, 153, 159)
+        }
+      }
+      .cartcontrol-wrapper {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+
+      }
+      .buy {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        z-index: 10;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #fff;
+        background-color: rgb(0, 160, 220);
+      }
+      .fade-enter, .fade-leave-to {
+        opacity: 0;
+      }
+      .fade-enter-active, .fade-leave-active {
+        transition: all .3s;
+      }
+    }
+    .info {
+      padding: 18px;
+      .title {
+        padding: 0 8px;
+        margin-bottom: 6px;
+        font-size: 14px;
+        line-height: 24px;
+        color: rgb(7, 17, 27);
+      }
+      .text {
+        line-height: 20px;
+        padding: 0 8px;
+        font-size: 12px;
+        color: #444;
+      }
+    }
+    .rating {
+      padding-top: 18px;
+      .title {
+        padding: 0 8px;
+        margin-bottom: 6px;
+        font-size: 14px;
+        line-height: 24px;
+        color: rgb(7, 17, 27);
+      }
+      .rating-wrapper {
+        padding: 0 18px;
+        .rating-item {
+          position: relative;
+          padding: 16px 0;
+          border-bottom: 1px solid #ddd;
+          .user {
+            position: absolute;
+            top: 16px;
+            right: 0;
+            line-height: 12px;
+            font-size: 0;
+            .name {
+              display: inline-block;
+              margin-right: 6px;
+              vertical-align: top;
               font-size: 10px;
-              color: rgb(147, 153, 159)
+              color: rgb(147, 153, 159);
+              .avater {
+                border-radius: 50%
+              }
             }
           }
+          .time {
+            margin-right: 6px;
+            line-height: 18px;
+            font-size: 10px;
+            color: rgb(147, 153, 159);
+          }
+          .text {
+            line-height: 16px;
+            font-size: 12px;
+            color: rgb(7, 17, 27);
+            .iconfont {
+              margin-right: 4px;
+              line-height: 16px;
+              font-size: 12px;
+              &.colorblue {
+                color: blue;
+              }
+            }
+          }
+
+        }
+        .no-rating {
+          padding: 16px 0;
+          font-size: 12px;
+          color: rgb(147, 153, 159);
         }
       }
     }
+
   }
 </style>
