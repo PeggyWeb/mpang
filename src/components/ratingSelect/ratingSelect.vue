@@ -10,7 +10,7 @@
     </div>
     <div @click="toggleContent" class="switch" :class="{'on':onlyContent}">
       <span class="iconfont">&#xe605;</span>
-      <span>只看有内容的评价</span>
+      <span class="text">只看有内容的评价</span>
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@
         default(){
           return {
             all: '全部',
-            position: '满意',
+            positive: '满意',
             negative: '不满意'
           }
         }
@@ -70,7 +70,7 @@
         if (!event._constructed) {
           return false;
         }
-        
+
         this.$emit('toggle');
       }
     }
@@ -126,11 +126,13 @@
       .iconfont {
         display: inline-block;
         vertical-align: middle;
+        margin-top:-8px;
         margin-right: 4px;
         font-size: 24px;
-        &text {
-          font-size: 12px;
-        }
+      }
+      .text {
+        font-size: 14px;
+        line-height:26px;
       }
     }
   }

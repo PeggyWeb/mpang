@@ -23,6 +23,8 @@
   import axios from 'axios'
   import header from './components/header/header'
   import goods from './components/goods/goods'
+  import ratings from './components/ratings/ratings'
+
   const ERR_OK = 0;
 export default {
   name: 'app',
@@ -35,7 +37,6 @@ export default {
   },
   created(){
       this.seller = require('../data.json');
-
 
     /*axios.get('api/goods').then((response) => {
       response=response.json();

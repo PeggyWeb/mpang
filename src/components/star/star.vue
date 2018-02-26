@@ -36,6 +36,7 @@
         while(result.length<LENGTH){
         	result.push(CLS_OFF);
         }
+
         return result;
 			}
     }
@@ -48,6 +49,9 @@
   .star-item{
     display: inline-block;
     background-repeat:no-repeat;
+  }
+  .star-item:last-of-type{
+    margin-right:0!important;
   }
   .star-48 .star-item{
     width: 20px;
@@ -72,29 +76,29 @@
     background-size:20px 20px;
   }
   .star-36 .star-item :last-child{margin-right:0}
-  .star-36 .star-item .on{
+  .star-36 .star-item.on{
     background-image: url(star36_on@3x.png);
   }
-  .star-36 .star-item .off{
+  .star-36 .star-item.off{
     background-image: url(star36_off@3x.png);
   }
-  .star-36 .star-item .half{
+  .star-36 .star-item.half{
     background-image: url(star36_half@3x.png);
   }
   .star-24 .star-item{
-    width: 20px;
-    height:20px;
-    margin-right:22px;
-    background-size:20px 20px;
+    width: 16px;
+    height:16px;
+    margin-right:5px;
+    background-size:16px 16px;
   }
   .star-24 .star-item :last-child{margin-right:0}
-  .star-24 .star-item .on{
+  .star-24 .star-item.on{
     background-image: url(star24_on@3x.png);
   }
-  .star-24 .star-item .off{
+  .star-24 .star-item.off{
     background-image: url(star24_off@3x.png);
   }
-  .star-24 .star-item .half{
+  .star-24 .star-item.half{
     background-image: url(star24_half@3x.png);
   }
 </style>

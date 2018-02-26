@@ -5,7 +5,7 @@ import Ratings from '@/components/ratings/ratings'
 import Seller from '@/components/seller/seller'
 // import HelloWorld from '@/components/HelloWorld'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [

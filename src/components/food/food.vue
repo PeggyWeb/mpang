@@ -129,7 +129,7 @@
           return;
         }
         this.$on('cart.add', event.target);
-        console.log(event.target)
+//        console.log(event.target)打印节点
         Vue.set(this.food, 'count', 1);
         //到此，加入购物车可以显示但小球无动画，原因，点击的时候元素隐藏了，因此获取不到位置，故可以给这里的点击加上动画transition,让他不那么快消失
       },
