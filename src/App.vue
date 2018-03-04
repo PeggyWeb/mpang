@@ -15,7 +15,10 @@
 
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+
+    </keep-alive>
   </div>
 </template>
 
@@ -72,19 +75,18 @@ export default {
   .tab:after{
     display: block;
     position: absolute;
-    top:0;
+    left:0;
     bottom:0;
     width:100%;
     border-top:1px solid #eee;
     content:"";
-    -webkit-transform: scaleY(0.5);
-    -moz-transform: scaleY(0.5);
-    -ms-transform: scaleY(0.5);
-    -o-transform: scaleY(0.5);
-    transform: scaleY(0.5);
   }
   .tab-item{
     flex:1;
     text-align:center;
   }
+  .tab-item a{
+    display:block;
+  }
+
 </style>
