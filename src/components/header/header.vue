@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" v-if="seller.seller">
     <div class="content-wrapper">
       <div class="avatar">
         <img width="64" height="64" :src="seller.seller.avatar">
@@ -131,6 +131,10 @@
     margin-right: 4px;
     background-size: 12px 12px;
     background-repeat: no-repeat;
+  }
+  .detail-main .support{
+    width: 80%;
+    margin:0 auto;
   }
   .support .icon.decrease {
     background-image: url('decrease_1@3x.png')
@@ -351,6 +355,7 @@
     },
     created(){
       this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
+
     },
     components:{
     	star:star

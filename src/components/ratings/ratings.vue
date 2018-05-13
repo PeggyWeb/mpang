@@ -3,25 +3,25 @@
     <div class="ratings-content">
       <div class="overview">
         <div class="overview-left">
-          <h1 class="score">{{_seller.score}}</h1>
+          <h1 class="score" v-if="seller.seller.score">{{seller.seller.score}}</h1>
           <div class="title">综合评分</div>
-          <div class="rank">高于周边商家{{_seller.rank}}</div>
+          <div class="rank">高于周边商家{{seller.seller.rank}}</div>
         </div>
         <div class="overview-right">
           <div class="score-wrapper">
             <span class="title">
               服务态度</span>
-              <star :size="24" :score="_seller.serviceScore"></star>
-              <span class="score">{{_seller.serviceScore}}</span>
+              <star :size="24" :score="seller.seller.serviceScore"></star>
+              <span class="score">{{seller.seller.serviceScore}}</span>
           </div>
           <div class="score-wrapper">
             <span class="title">商品评分</span>
-            <star :size="24" :score="_seller.foodScore"></star>
-            <span class="score">{{_seller.foodScore}}</span>
+            <star :size="24" :score="seller.seller.foodScore"></star>
+            <span class="score">{{seller.seller.foodScore}}</span>
           </div>
           <div class="delivery-wrapper">
             <span class="title">送达时间</span>
-            <span class="delivery">{{_seller.deliveryTime}}分钟</span>
+            <span class="delivery">{{seller.seller.deliveryTime}}分钟</span>
           </div>
         </div>
       </div>
@@ -63,6 +63,7 @@
   </div>
 </template>
 <script>
+  import axios from 'axios'
   import BScroll from 'better-scroll';
   import star from '../star/star';
   import ratingSelect from '../ratingSelect/ratingSelect'
@@ -93,13 +94,24 @@
       ratingSelect:ratingSelect
     },
     created(){
-      this._seller = this.seller.seller;
-      this.$http("../../data.json").then((result)=>{
-       this.ratings = result.data.ratings;
-       this.$nextTick(()=>{
-         this.scroll = new BScroll(this.$refs.ratings,{click:true});
-       })
+//    	if(this.seller.seller){
+//        this._seller = this.seller.seller;
+//      }else{
+//        axios.get('/shop').then((response)=>{
+//          this._seller = response.data.seller;
+//        }).catch(function(error){
+//          console.log(error)
+//        })
+//      }
+      axios.get('/rating').then((response)=>{
+        this.ratings = response.data.ratings;
+        this.$nextTick(()=>{
+          this.scroll = new BScroll(this.$refs.ratings,{click:true})
+        });
+      }).catch(function(error){
+      	console.log(error)
       });
+
     },
     filters: {
       formatDate(time){

@@ -88,15 +88,16 @@
     },
     created(){
     	this.classMap=['decrease','discount','special','invoice','guarantee'];
-  		this.$http("../../data.json").then((result)=>{
+  		this.$http("/goods").then((result)=>{
   			/*let res = result.data;
   			this.goods = res.goods;*/
   			this.goods = result.data.goods;
-        this.$nextTick(() => {
-          this._initScroll();
-          this._calculateHeight();
-        })
+
       });
+      this.$nextTick(() => {
+        this._initScroll();
+        this._calculateHeight();
+      })
     },
     methods:{
       selectMenu(index,event){

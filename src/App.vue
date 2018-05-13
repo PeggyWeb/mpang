@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header :seller="seller">
+    <v-header :seller="shop">
 
     </v-header>
     <div class="tab">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <keep-alive>
-      <router-view :seller="seller"></router-view>
+      <router-view :seller="shop"></router-view>
 
     </keep-alive>
   </div>
@@ -27,29 +27,23 @@
   import header from './components/header/header'
   import goods from './components/goods/goods'
   import ratings from './components/ratings/ratings'
+  import seller from './components/seller/seller'
+
 
   const ERR_OK = 0;
 export default {
   name: 'app',
   data(){
     return{
-        seller:{
-
-        }
+        shop:{}
     }
   },
-  created(){
-      this.seller = require('../data.json');
-
-    /*axios.get('api/goods').then((response) => {
-      response=response.json();
-      if(response.errno === ERR_OK){
-         this.seller = response.body;
-         console.log(this.seller)
-      }
-    }).catch(function(){
-
-    })*/
+  created:function(){
+    axios.get('/shop').then((response)=>{
+    	this.shop = response.data;
+    }).catch(function(error){
+    	console.log(error)
+    })
   },
   components:{
     'v-header':header,
@@ -83,10 +77,13 @@ export default {
   }
   .tab-item{
     flex:1;
+    border-left:1px solid #eee;
     text-align:center;
   }
+  .tab-item:first-child{border-left:0}
   .tab-item a{
     display:block;
+    color:#666;
   }
 
 </style>

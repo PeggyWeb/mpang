@@ -1,32 +1,32 @@
 <template>
-  <div class="seller" ref="seller">
+  <div class="seller" ref="info" >
     <div class="seller-content">
       <div class="overview">
         <h1 class="title">
-          {{_seller.name}}
+          {{seller.seller.name}}
         </h1>
         <div class="desc">
-          <star :size="24" :score="_seller.score"></star>
-          <span class="text">{{_seller.ratingCount}}</span>
-          <span class="text">月售{{_seller.sellCount}}笔</span>
+          <star :size="24" :score="seller.seller.score"></star>
+          <span class="text">{{seller.seller.ratingCount}}</span>
+          <span class="text">月售{{seller.seller.sellCount}}笔</span>
         </div>
         <ul class="remark">
           <li class="block">
             <h2>起送价</h2>
             <div class="content">
-              <span class="stress">{{_seller.minPrice}}元</span>
+              <span class="stress">{{seller.seller.minPrice}}元</span>
             </div>
           </li>
           <li class="block">
             <h2>商家配送</h2>
             <div class="content">
-              <span class="stress">{{_seller.deliva}}元</span>
+              <span class="stress">{{seller.seller.deliveryPrice}}元</span>
             </div>
           </li>
           <li class="block">
             <h2>平均配送时间</h2>
             <div class="content">
-              <span class="stress">{{_seller.minPrice}}分钟</span>
+              <span class="stress">{{seller.seller.minPrice}}分钟</span>
             </div>
           </li>
         </ul>
@@ -40,13 +40,13 @@
         <h1 class="title">公告与活动</h1>
         <div class="content-wrapper">
           <p class="content">
-            {{_seller.bulletin}}
+            {{seller.seller.bulletin}}
           </p>
         </div>
         <ul class="support">
-          <li class="support-item" v-for="(item,index) in _seller.supports">
-            <span class="icon" :class="classMap[_seller.supports[index].type]"></span>
-            <span class="text">{{_seller.supports[index].description}}</span>
+          <li class="support-item" v-for="(item,index) in seller.seller.supports">
+            <span class="icon" :class="classMap[seller.seller.supports[index].type]"></span>
+            <span class="text">{{seller.seller.supports[index].description}}</span>
           </li>
         </ul>
 
@@ -56,7 +56,7 @@
         <h1 class="title">商家实景</h1>
         <div class="pic-wrapper" ref="picWrapper">
           <ul class="pic-list" ref="picList" :style="{width:width + 'px'}">
-            <li v-for="item in _seller.pics" class="pic-item">
+            <li v-for="item in seller.seller.pics" class="pic-item">
               <img :src="item" width="120" height="90">
             </li>
           </ul>
@@ -66,7 +66,7 @@
       <div class="info">
         <h1 class="title">商家信息</h1>
         <ul>
-          <li class="info-item" v-for="info in _seller.info">
+          <li class="info-item" v-for="info in seller.seller.info">
             {{info}}
           </li>
         </ul>
@@ -98,26 +98,23 @@
       }
     },
     created(){
+
       this.classMap = ['decrease', 'discount', 'special', 'guarance'];
-      this._seller = this.seller.seller;
+
     },
     watch: {
-      'seller'() {
+      seller:function(){
         this.$nextTick(() => {
           this._initScroll();
           this._initPics();
         });
       }
     },
-    mounted() {
+    mounted:function(){
       this.$nextTick(() => {
         this._initScroll();
         this._initPics();
       });
-    },
-    ready(){
-      this._initScroll();
-      this._initPics();
     },
     methods: {
       toggleFavorite(){
@@ -128,17 +125,17 @@
       },
       _initScroll(){
         if (!this.scroll) {
-          this.scroll = new BScroll(this.$refs.seller, {click: true})
+          this.scroll = new BScroll(this.$refs.info, {click: true})
         } else {
-          this.scroll = new BScroll(this.$refs.seller, {click: true})
+          this.scroll = new BScroll(this.$refs.info, {click: true})
 
         }
       },
       _initPics(){
-        if(this._seller.pics){
+        if(this.seller.seller.pics){
           let picWidth = 120;
           let marginRight = 6;
-          this.width = (picWidth + marginRight)*this._seller.pics.length-marginRight;
+          this.width = (picWidth + marginRight)*this.seller.seller.pics.length-marginRight;
           this.$nextTick(()=>{
           	if(!this.picScroll){
               this.picScroll = new BScroll(this.$refs.picWrapper, {
